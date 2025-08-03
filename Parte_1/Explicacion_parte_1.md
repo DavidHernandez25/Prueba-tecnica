@@ -57,14 +57,3 @@ La estrategia se compone de 3 niveles de análisis:
 
 
 
-## 🗂️ Estructura del Repositorio
-
-```bash
-├── data/
-│   └── historico_KO.csv       # Dataset descargado con yfinance
-├── notebooks/
-│   └── estrategia_KO.ipynb    # Implementación de la lógica y visualizaciones
-├── utils/
-│   └── indicadores.py         # Funciones auxiliares (ADX, Bollinger, pendiente, etc.)
-├── README.md                  # Este documento
-└── requirements.txt           # Dependencias del entorno
