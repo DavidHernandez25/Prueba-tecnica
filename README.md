@@ -2,7 +2,7 @@
 
 Este repositorio contiene el desarrollo completo de una prueba técnica enfocada en el análisis y modelado de datos financieros multitemporales, con énfasis en técnicas de ingeniería de datos, indicadores técnicos y aprendizaje supervisado.
 
-El objetivo es predecir la dirección del precio de la acción de Coca-Cola (KO) en la siguiente hora, utilizando información de múltiples marcos temporales (D1, H1, M15). Se han implementado flujos robustos de descarga de datos, cálculo de indicadores, consolidación multitemporal y modelado predictivo.
+Se han implementado flujos robustos de descarga de datos, cálculo de indicadores, consolidación multitemporal y modelado predictivo.
 
 ---
 
@@ -18,12 +18,10 @@ El objetivo es predecir la dirección del precio de la acción de Coca-Cola (KO)
 │ ├── Explicacion_Parte_2.md
 │ ├── feature_importance.png
 │ ├── loss_curve.png
-│ ├── Matriz de Confusión.png│
+│ ├── Matriz de Confusión.png
 ├── Parte_3/
 │ ├── diagrama.png
 │ ├── Explicacion_Parte_3.md
-├── data/
-│ └── (archivos de datos generados)
 ├── README.md
 ```
 
