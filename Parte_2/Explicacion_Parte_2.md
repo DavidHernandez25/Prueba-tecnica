@@ -63,9 +63,7 @@ Un mayor historial permite capturar más contextos de mercado y patrones diverso
 Se diseñó un conjunto robusto de variables predictoras que capturan **momentum, tendencia, fuerza, volatilidad, asimetría y posición relativa del precio** basados en diferentes temporalidades, los indicadores clave son:
 
 ### Indicadores en H1
-1. **Retornos Logarítmicos** y **Sesgo de Precio `(Log_Ret, Skewness)`**:
-
-Estas transformaciones del precio de cierre permiten al modelo entender la distribución y la dirección del movimiento del precio de una manera robusta. Los retornos logarítmicos manejan bien los cambios extremos del precio, mientras que el sesgo (`skewness`) indica si el precio tiende a inclinarse hacia valores mayores o menores, ofreciendo una señal de la presión compradora o vendedora.
+1. **Retornos Logarítmicos** y **Sesgo de Precio `(Log_Ret, Skewness)`**: Estas transformaciones del precio de cierre permiten al modelo entender la distribución y la dirección del movimiento del precio de una manera robusta. Los retornos logarítmicos manejan bien los cambios extremos del precio, mientras que el sesgo (`skewness`) indica si el precio tiende a inclinarse hacia valores mayores o menores, ofreciendo una señal de la presión compradora o vendedora.
 
 2. **Pendiente de una regresión lineal `(Reg_Slope)`**: La pendiente de una regresion lineal, es una excelente herramienta para contextualizar la tendencia actual. Si la pendiente es positiva, el mercado está en una tendencia alcista; si es negativa, está en una tendencia bajista. Esta característica es crucial para el modelo, ya que la probabilidad de una subida o bajada en la siguiente hora a menudo depende de la dirección de la tendencia predominante.
 
@@ -116,18 +114,39 @@ En su lugar, se emplearían las siguientes métricas para obtener una comprensi�
     - `F1-score`: Es un promedio ponderado de la precision y el recall. Es una excelente métrica para obtener una visión balanceada del rendimiento de cada clase.
 
 - Matriz de Confusión: Visualiza las predicciones correctas e incorrectas de cada clase, proporcionando una visión detallada de los errores del modelo.
-- `Permutation feauture importance`: No solo permite la fácil comparabilidad entre modelos sino que también mide que tanto poder explicativo gana el modelo cuando se tiene en cuenta ese feature lo cual lo hace fácil de leer e interpretar, además de que es independiente a los modelos por lo que se puede comprar el performance de una  red neuronal y de un árbol de decisión.
+- `Permutation Feauture Importance`: No solo permite la fácil comparabilidad entre modelos sino que también mide que tanto poder explicativo gana el modelo cuando se tiene en cuenta ese feature lo cual lo hace fácil de leer e interpretar, además de que es independiente a los modelos por lo que se puede comprar el performance de una  red neuronal y de un árbol de decisión.
 
 Una vez que el modelo esté optimizado con estas métricas, se podrían utilizar herramientas de interpretabilidad como SHAP (SHapley Additive exPlanations) para entender qué características específicas están influyendo más en las predicciones, lo cual es fundamental para validar la lógica del modelo y generar confianza en sus resultados.
 
 ---
 
-## Conclusiones Finales
+## Conclusiones y Comentarios Finales
 
 - Se construyó una solución robusta, usando ingeniería de features multitemporal y un modelo interpretable.
 - El etiquetado adaptativo fue clave para evitar errores por ruido de mercado.
 - Se priorizó la simplicidad y generalización, sin caer en overfitting.
 - El código está modularizado y documentado, y puede extenderse fácilmente a otros activos.
+- Se aplicó oversampling para balancear las clases.
+- Este modelo por si solo no se puede usar en el mercado en vivo, para una estrategia completa se debe tener en cuenta una gestion activa de riesgo como puntos de entrada, salida etc.
+- Para obtener una métrica de posible desempeño del modelo toca hacer pruebas de backtesting.
+- Para contianuar mejorando el desempeño del modelo se proponen las siguientes opciones:
+    - Ingenieria de características adicionales: Explorar indicadores de volumen como el On-Balance Volume (OBV) y otras transformaciones de precio con _lag_ que capturen la dinámica del mercado con mayor precisión y no solo la inmediatamente anterior.
+    - Optimización de Hiperparámetros: Utilizar métodos como RandomizedSearchCV para encontrar la combinación óptima de hiperparámetros que mejore el F1-score en las clases minoritarias.
 
+### Interpretación de resultados
+
+1. **Diagnóstico Principal:** El modelo no está sobreajustado, pero está subajustado. La curva de `mlogloss` en el conjunto de prueba muestra una ligera mejora desde el valor de adivinación aleatoria (`~1.098` que se calcula como `-ln(pobabilidad_correcta)`), lo que indica que está encontrando un pequeño patrón. Sin embargo, este patrón es demasiado débil para producir predicciones consistentes y de alta confianza.
+
+2. **Rendimiento por Clase:** El `Informe de Clasificación` revela que el modelo tiene fortalezas y debilidades específicas:
+
+    - Clase 0 (Baja): Con un `recall` de 0.40, el modelo es más efectivo en identificar movimientos a la baja que en los de subida. Sin embargo, su `precision` de 0.29 muestra que muchas de sus predicciones de "bajada" son incorrectas.
+
+    - Clase 1 (Sube): Esta es la clase más difícil de predecir. El bajo `recall` de 0.20 indica que el modelo no logra identificar la mayoría de las subidas reales.
+
+    - Clase 2 (No Cambio): El modelo es más competente en esta clase, con una `precision` y `recall` alrededor del 0.45, lo que confirma su tendencia a clasificar correctamente los períodos sin cambios significativos.
+
+3. **Matriz de Confusión:** La matriz de confusión ilustra el alto nivel de confusión entre las clases. Los valores en la diagonal principal (predicciones correctas) son bajos, mientras que los errores (valores fuera de la diagonal) son significativos. Esto confirma que el modelo tiene dificultades para diferenciar de manera efectiva entre una subida, una bajada y un cambio insignificante.
+
+4. **Predicción Final:** La predicción para el siguiente período de "Cambio Insignificante" con una confianza de 33.42% es un reflejo directo del rendimiento general del modelo. Una confianza tan baja indica que el modelo no ha encontrado una señal fuerte para esa instancia de datos, y su predicción es, esencialmente, una conjetura con base en la distribución de las clases.
 ---
 

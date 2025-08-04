@@ -3,10 +3,10 @@
 import yfinance as yf # Extraccion de datos
 import pandas as pd # Para manejos de dataframes
 import numpy as np # Para operaciones
-from xgboost import XGBClassifier, plot_importance
-from sklearn.metrics import classification_report, confusion_matrix, ConfusionMatrixDisplay
-from imblearn.over_sampling import RandomOverSampler
-import matplotlib.pyplot as plt
+from xgboost import XGBClassifier, plot_importance # Feature importance
+from sklearn.metrics import classification_report, confusion_matrix, ConfusionMatrixDisplay  # Reportes
+from imblearn.over_sampling import RandomOverSampler # Desbalance de clases
+import matplotlib.pyplot as plt # Gráficos
 
 # He elegido el modelo de clasificacion que consiste en predecir la direccion del precio en la siguiente hora
 
@@ -202,8 +202,6 @@ print("-" * 40)
 
 # Preparar los datos para el modelo
 features = df_final[['ADX', 'EMA20_Slope', 'Log_Ret', 'Volatility', 'Skewness', 'candle_size', 'Reg_Slope', 'High', 'Low', 'Open', 'Close', 'RSI', 'MACD', 'MACD_SIG' ,'MACD_HIST']]
-
-
 target = df_final['Target']
 
 
@@ -218,8 +216,8 @@ print(f"Total de datos: {len(features)}")
 print(f"Datos de entrenamiento: {len(features_train)}")
 print(f"Datos de prueba: {len(target_test)}")
 
+#Oversampling para balancear las clases
 oversampler = RandomOverSampler(random_state=42)
-
 # Aplicamos el oversampling SOLO en el conjunto de entrenamiento
 features_train_resampled, target_train_resampled = oversampler.fit_resample(features_train, target_train)
 
@@ -273,7 +271,7 @@ plt.savefig('loss_curve.png')
 
 
 
-# Importancia de características
+# Importancia de características (Permutation Feature Importance)
 fig, ax = plt.subplots(figsize=(12, 8))
 plot_importance(
     model, 
@@ -299,7 +297,7 @@ plt.title("Matriz de Confusión (3 Clases)")
 plt.savefig('Matriz de Confusión.png')
 
 
-#    Obtener los datos más recientes para la predicción
+
 #    Seleccionamos la última fila del DataFrame de características.
 #    Utilizamos .iloc[-1:] para asegurarnos de que sea un DataFrame
 #    y mantenga el formato correcto para el modelo.
